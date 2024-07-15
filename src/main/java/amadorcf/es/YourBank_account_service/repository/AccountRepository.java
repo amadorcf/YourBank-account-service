@@ -1,8 +1,9 @@
 package amadorcf.es.YourBank_account_service.repository;
 
+import amadorcf.es.YourBank_account_service.model.AccountType;
+import amadorcf.es.YourBank_account_service.model.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.training.account.service.model.AccountType;
-import org.training.account.service.model.entity.Account;
+
 
 import java.util.Optional;
 
