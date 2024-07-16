@@ -1,13 +1,11 @@
 package amadorcf.es.YourBank_account_service.service;
 
 import amadorcf.es.YourBank_account_service.model.dto.AccountDto;
-import amadorcf.es.YourBank_account_service.model.dto.AccountStatusUpdate;
+import amadorcf.es.YourBank_account_service.model.dto.UpdateAccountStatus;
 import amadorcf.es.YourBank_account_service.model.dto.response.Response;
 
 //import org.training.account.service.model.dto.external.TransactionResponse;
 
-
-import java.util.List;
 
 public interface AccountService {
 
@@ -26,7 +24,7 @@ public interface AccountService {
      * @param accountUpdate   The account status update to apply.
      * @return                The response indicating the success or failure of the update.
      */
-    Response updateStatus(String accountNumber, AccountStatusUpdate accountUpdate);
+    Response updateStatus(String accountNumber, UpdateAccountStatus accountUpdate);
 
     /**
      * Retrieves an account by its account number.
@@ -78,3 +76,5 @@ public interface AccountService {
      */
     AccountDto readAccountByUserId(Long userId);
 }
+
+

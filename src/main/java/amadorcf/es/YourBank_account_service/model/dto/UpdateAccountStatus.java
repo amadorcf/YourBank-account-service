@@ -5,6 +5,6 @@ import lombok.Data;
 
 
 @Data
-public class AccountStatusUpdate {
+public class UpdateAccountStatus {
     AccountStatus accountStatus;
 }

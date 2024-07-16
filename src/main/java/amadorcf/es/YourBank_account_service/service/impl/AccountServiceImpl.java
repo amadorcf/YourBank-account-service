@@ -1,11 +1,12 @@
 package amadorcf.es.YourBank_account_service.service.impl;
 
-import amadorcf.es.YourBank_account_service.exception.ResourceConflict;
-import amadorcf.es.YourBank_account_service.exception.ResourceNotFound;
+import amadorcf.es.YourBank_account_service.exception.*;
+import amadorcf.es.YourBank_account_service.external.SequenceService;
 import amadorcf.es.YourBank_account_service.external.UserService;
 import amadorcf.es.YourBank_account_service.model.AccountStatus;
 import amadorcf.es.YourBank_account_service.model.AccountType;
 import amadorcf.es.YourBank_account_service.model.dto.AccountDto;
+import amadorcf.es.YourBank_account_service.model.dto.UpdateAccountStatus;
 import amadorcf.es.YourBank_account_service.model.dto.external.UserDto;
 import amadorcf.es.YourBank_account_service.model.dto.response.Response;
 import amadorcf.es.YourBank_account_service.model.entity.Account;
@@ -18,21 +19,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.training.account.service.exception.*;
-import org.training.account.service.external.SequenceService;
-import org.training.account.service.external.TransactionService;
-import org.training.account.service.external.UserService;
-import org.training.account.service.model.AccountStatus;
-import org.training.account.service.model.AccountType;
-import org.training.account.service.model.dto.AccountDto;
-import org.training.account.service.model.dto.AccountStatusUpdate;
-import org.training.account.service.model.dto.external.TransactionResponse;
-import org.training.account.service.model.dto.external.UserDto;
-import org.training.account.service.model.dto.response.Response;
-import org.training.account.service.model.entity.Account;
-import org.training.account.service.model.mapper.AccountMapper;
-import org.training.account.service.repository.AccountRepository;
-import org.training.account.service.service.AccountService;
+
+//import org.training.account.service.external.TransactionService;
+//import org.training.account.service.model.dto.external.TransactionResponse;
+
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,11 +39,11 @@ public class AccountServiceImpl implements AccountService {
     private final UserService userService;
     private final AccountRepository accountRepository;
     private final SequenceService sequenceService;
-    // Se implementara cuando se creen los microservicios
+
+    //TODO: Implementar cuando se creen los microservicios
     //private final TransactionService transactionService;
 
     private final AccountMapper accountMapper = new AccountMapper();
-
 
     @Value("${spring.application.ok}")
     private String success;
@@ -71,13 +61,13 @@ public class AccountServiceImpl implements AccountService {
 
         ResponseEntity<UserDto> user = userService.readUserById(accountDto.getUserId());
         if (Objects.isNull(user.getBody())) {
-            throw new ResourceNotFound("user not found on the server");
+            throw new ResourceNotFound("User not found");
         }
 
         accountRepository.findAccountByUserIdAndAccountType(accountDto.getUserId(), AccountType.valueOf(accountDto.getAccountType()))
                 .ifPresent(account -> {
-                    log.error("Account already exists on the server");
-                    throw new ResourceConflict("Account already exists on the server");
+                    log.error("Account already exists");
+                    throw new ResourceConflict("Account already exists");
                 });
 
         Account account = accountMapper.convertToEntity(accountDto);
@@ -88,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(account);
         return Response.builder()
                 .responseCode(success)
-                .message(" Account created successfully").build();
+                .message("Account created successfully").build();
     }
 
     /**
@@ -102,20 +92,20 @@ public class AccountServiceImpl implements AccountService {
      * @throws ResourceNotFound        If the account could not be found.
      */
     @Override
-    public Response updateStatus(String accountNumber, AccountStatusUpdate accountUpdate) {
+    public Response updateStatus(String accountNumber, UpdateAccountStatus accountUpdate) {
 
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
                     if(account.getAccountStatus().equals(AccountStatus.ACTIVE)){
                         throw new AccountStatusException("Account is inactive/closed");
                     }
-                    if(account.getAvailableBalance().compareTo(BigDecimal.ZERO) < 0 || account.getAvailableBalance().compareTo(BigDecimal.valueOf(1000)) < 0){
-                        throw new InSufficientFunds("Minimum balance of Rs.1000 is required");
+                    if(account.getAvailableBalance().compareTo(BigDecimal.ZERO) < 0 || account.getAvailableBalance().compareTo(BigDecimal.valueOf(10)) < 0){
+                        throw new InSufficientFunds("Minimum balance of 10€ is required");
                     }
                     account.setAccountStatus(accountUpdate.getAccountStatus());
                     accountRepository.save(account);
                     return Response.builder().message("Account updated successfully").responseCode(success).build();
-                }).orElseThrow(() -> new ResourceNotFound("Account not on the server"));
+                }).orElseThrow(() -> new ResourceNotFound("Account not found"));
 
     }
 
@@ -175,11 +165,12 @@ public class AccountServiceImpl implements AccountService {
      * @param accountId The ID of the account to retrieve transactions from
      * @return A list of transaction responses
      */
-    @Override
-    public List<TransactionResponse> getTransactionsFromAccountId(String accountId) {
-
-        return transactionService.getTransactionsFromAccountId(accountId);
-    }
+    //TODO: Implementar mas adelate
+//    @Override
+//    public List<TransactionResponse> getTransactionsFromAccountId(String accountId) {
+//
+//        return transactionService.getTransactionsFromAccountId(accountId);
+//    }
 
     /**
      * Closes the account with the specified account number.
