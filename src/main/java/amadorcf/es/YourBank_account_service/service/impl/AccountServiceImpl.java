@@ -1,5 +1,16 @@
 package amadorcf.es.YourBank_account_service.service.impl;
 
+import amadorcf.es.YourBank_account_service.exception.ResourceConflict;
+import amadorcf.es.YourBank_account_service.exception.ResourceNotFound;
+import amadorcf.es.YourBank_account_service.external.UserService;
+import amadorcf.es.YourBank_account_service.model.AccountStatus;
+import amadorcf.es.YourBank_account_service.model.AccountType;
+import amadorcf.es.YourBank_account_service.model.dto.AccountDto;
+import amadorcf.es.YourBank_account_service.model.dto.external.UserDto;
+import amadorcf.es.YourBank_account_service.model.dto.response.Response;
+import amadorcf.es.YourBank_account_service.model.entity.Account;
+import amadorcf.es.YourBank_account_service.model.mapper.AccountMapper;
+import amadorcf.es.YourBank_account_service.repository.AccountRepository;
 import amadorcf.es.YourBank_account_service.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +38,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-import static org.training.account.service.model.Constants.ACC_PREFIX;
+import static amadorcf.es.YourBank_account_service.model.Constants.ACC_PREFIX;
+
 
 @Slf4j
 @Service
@@ -37,7 +49,8 @@ public class AccountServiceImpl implements AccountService {
     private final UserService userService;
     private final AccountRepository accountRepository;
     private final SequenceService sequenceService;
-    private final TransactionService transactionService;
+    // Se implementara cuando se creen los microservicios
+    //private final TransactionService transactionService;
 
     private final AccountMapper accountMapper = new AccountMapper();
 
